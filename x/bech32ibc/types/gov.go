@@ -5,7 +5,7 @@ import (
 	"strings"
 	time "time"
 
-	govtypes "github.com/cosmos/cosmos-sdk/x/gov/types"
+	gov1b1 "github.com/cosmos/cosmos-sdk/x/gov/types/v1beta1"
 )
 
 const (
@@ -13,13 +13,13 @@ const (
 )
 
 func init() {
-	govtypes.RegisterProposalType(ProposalTypeUpdateHrpIbcChannel)
-	govtypes.RegisterProposalTypeCodec(&UpdateHrpIbcChannelProposal{}, "osmosis/UpdateHrpIbcChannel")
+	// Deprecated: gov1b1 is deprecated
+	gov1b1.RegisterProposalType(ProposalTypeUpdateHrpIbcChannel)
 }
 
-var _ govtypes.Content = &UpdateHrpIbcChannelProposal{}
+var _ gov1b1.Content = &UpdateHrpIbcChannelProposal{}
 
-func NewUpdateHrpIBCRecordProposal(title, description, hrp, sourceChannel string, toHeightOffset uint64, toTimeOffset time.Duration) govtypes.Content {
+func NewUpdateHrpIBCRecordProposal(title, description, hrp, sourceChannel string, toHeightOffset uint64, toTimeOffset time.Duration) gov1b1.Content {
 	return &UpdateHrpIbcChannelProposal{
 		Title:             title,
 		Description:       description,
@@ -41,7 +41,7 @@ func (p *UpdateHrpIbcChannelProposal) ProposalType() string {
 }
 
 func (p *UpdateHrpIbcChannelProposal) ValidateBasic() error {
-	err := govtypes.ValidateAbstract(p)
+	err := gov1b1.ValidateAbstract(p)
 	if err != nil {
 		return err
 	}

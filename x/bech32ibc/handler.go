@@ -5,7 +5,7 @@ import (
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
-	govtypes "github.com/cosmos/cosmos-sdk/x/gov/types"
+	gov1b1 "github.com/cosmos/cosmos-sdk/x/gov/types/v1beta1"
 
 	"github.com/osmosis-labs/bech32-ibc/x/bech32ibc/keeper"
 	"github.com/osmosis-labs/bech32-ibc/x/bech32ibc/types"
@@ -26,8 +26,8 @@ func NewHandler(k keeper.Keeper) sdk.Handler {
 	}
 }
 
-func NewBech32IBCProposalHandler(k keeper.Keeper) govtypes.Handler {
-	return func(ctx sdk.Context, content govtypes.Content) error {
+func NewBech32IBCProposalHandler(k keeper.Keeper) gov1b1.Handler {
+	return func(ctx sdk.Context, content gov1b1.Content) error {
 		switch c := content.(type) {
 		case *types.UpdateHrpIbcChannelProposal:
 			return handleUpdateHrpIbcChannelProposal(ctx, k, c)

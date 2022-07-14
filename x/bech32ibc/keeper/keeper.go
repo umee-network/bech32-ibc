@@ -3,10 +3,11 @@ package keeper
 import (
 	"fmt"
 
+	"github.com/cosmos/cosmos-sdk/codec"
+	storetypes "github.com/cosmos/cosmos-sdk/store/types"
+	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/tendermint/tendermint/libs/log"
 
-	"github.com/cosmos/cosmos-sdk/codec"
-	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/osmosis-labs/bech32-ibc/x/bech32ibc/types"
 )
 
@@ -15,7 +16,7 @@ type (
 		channelKeeper types.ChannelKeeper
 
 		cdc      codec.Codec
-		storeKey sdk.StoreKey
+		storeKey storetypes.StoreKey
 
 		tk types.TransferKeeper
 	}
@@ -24,7 +25,7 @@ type (
 func NewKeeper(
 	channelKeeper types.ChannelKeeper,
 	cdc codec.Codec,
-	storeKey sdk.StoreKey,
+	storeKey storetypes.StoreKey,
 	tk types.TransferKeeper,
 ) *Keeper {
 	return &Keeper{

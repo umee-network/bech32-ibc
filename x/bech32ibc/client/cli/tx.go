@@ -11,7 +11,7 @@ import (
 	"github.com/cosmos/cosmos-sdk/client/flags"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/x/gov/client/cli"
-	govtypes "github.com/cosmos/cosmos-sdk/x/gov/types"
+	gov1b1 "github.com/cosmos/cosmos-sdk/x/gov/types/v1beta1"
 
 	"github.com/osmosis-labs/bech32-ibc/x/bech32ibc/types"
 )
@@ -85,7 +85,7 @@ func NewCmdSubmitUpdateHrpIbcRecordProposal() *cobra.Command {
 
 			content := types.NewUpdateHrpIBCRecordProposal(title, description, hrp, channelId, heightOffset, durationOffset)
 
-			msg, err := govtypes.NewMsgSubmitProposal(content, deposit, from)
+			msg, err := gov1b1.NewMsgSubmitProposal(content, deposit, from)
 			if err != nil {
 				return err
 			}
