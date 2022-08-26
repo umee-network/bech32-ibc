@@ -49,10 +49,10 @@ func (am AppModule) RegisterServices(cfg module.Configurator) {
 
 // NewAppModule creates a new AppModule object
 func NewAppModule(cdc codec.Codec, keeper keeper.Keeper) AppModule {
+	m := bank.NewAppModule(cdc, keeper, nil)
 	return AppModule{
-		AppModuleBasic: bank.NewAppModuleBasic(cdc),
-
-		keeper: keeper,
+		AppModuleBasic: m.AppModuleBasic,
+		keeper:         keeper,
 	}
 }
 
