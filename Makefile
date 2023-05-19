@@ -133,19 +133,59 @@ distclean: clean
 	rm -rf vendor/
 
 ###############################################################################
-###                                  Proto                                  ###
+###                                Protobuf                                 ###
 ###############################################################################
 
-proto-all: proto-format proto-gen
+protoVer=0.13.0
+protoImageName=ghcr.io/cosmos/proto-builder:$(protoVer)
+protoImage=$(DOCKER) run --rm -v $(CURDIR):/workspace --workdir /workspace $(protoImageName)
 
-proto:
-	@echo
-	@echo "=========== Generate Message ============"
-	@echo
-	./scripts/protocgen.sh
-	@echo
-	@echo "=========== Generate Complete ============"
-	@echo
+proto-all: proto-format proto-lint proto-gen
+
+proto-gen:
+	@echo "Generating Protobuf files"
+	@$(protoImage) sh ./scripts/protocgen.sh
+
+proto-swagger-gen:
+	@echo "Generating Protobuf Swagger"
+	@$(protoImage) sh ./scripts/protoc-swagger-gen.sh
+
+proto-format:
+	@$(protoImage) find ./ -name "*.proto" -exec clang-format -i {} \;
+
+proto-lint:
+	@$(protoImage) buf lint --error-format=json
+
+proto-check-breaking:
+	@$(protoImage) buf breaking --against $(HTTPS_GIT)#branch=main
+
+proto-update-deps:
+	@echo "Updating Protobuf dependencies"
+	$(DOCKER) run --rm -v $(CURDIR)/proto:/workspace --workdir /workspace $(protoImageName) buf mod update
+
+build-reproducible: go.sum
+	$(DOCKER) rm latest-build || true
+	$(DOCKER) run --volume=$(CURDIR)/.././:/sources:ro \
+        --env TARGET_PLATFORMS='windows/amd64 darwin/amd64 linux/amd64 linux/arm64 ' \
+        --env APP=gravity \
+        --env VERSION=$(VERSION) \
+        --env COMMIT=$(COMMIT) \
+        --env LEDGER_ENABLED=$(LEDGER_ENABLED) \
+        --name latest-build altheanet/cosmos-rbuilder:latest
+	$(DOCKER) cp -a latest-build:/home/builder/artifacts/ $(CURDIR)/
+
+clean:
+	rm -rf $(BUILDDIR)/ artifacts/
+
+BUILD_TARGETS := build
+
+build: BUILD_ARGS=-o $(BUILDDIR)/
+
+$(BUILD_TARGETS): go.sum $(BUILDDIR)/
+	go $@ -mod=readonly $(BUILD_FLAGS) $(BUILD_ARGS) ./...
+
+$(BUILDDIR)/:
+	mkdir -p $(BUILDDIR)/
 
 build-gaia-docker:
 	docker build -t cosmos/gaia:$(GAIA_VERSION) --build-arg VERSION=$(GAIA_VERSION) -f ./docker/gaiad/Dockerfile .
@@ -188,15 +228,7 @@ docs:
 	@echo "=========== Generate Complete ============"
 	@echo
 
-proto-gen:
-	@echo "Generating Protobuf files"
-	$(DOCKER) run --rm -v $(CURDIR):/workspace --workdir /workspace tendermintdev/sdk-proto-gen sh ./scripts/protocgen.sh
 
-proto-format:
-	@echo "Formatting Protobuf files"
-	$(DOCKER) run --rm -v $(CURDIR):/workspace \
-	--workdir /workspace tendermintdev/docker-build-proto \
-	find ./ -not -path "./third_party/*" -name *.proto -exec clang-format -i {} \;
 
 ###############################################################################
 ###                                 Devdoc                                  ###

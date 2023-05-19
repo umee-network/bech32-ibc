@@ -2,10 +2,9 @@ package bech32ics20
 
 import (
 	"encoding/json"
-	"math/rand"
 	"time"
 
-	abci "github.com/tendermint/tendermint/abci/types"
+	abci "github.com/cometbft/cometbft/abci/types"
 
 	"github.com/cosmos/cosmos-sdk/codec"
 	"github.com/cosmos/cosmos-sdk/telemetry"
@@ -64,18 +63,8 @@ func (am AppModule) RegisterInvariants(ir sdk.InvariantRegistry) {
 	bankkeeper.RegisterInvariants(ir, am.keeper.Keeper)
 }
 
-// Route returns the message routing key for the bank module.
-func (am AppModule) Route() sdk.Route {
-	return sdk.NewRoute(types.RouterKey, NewHandler(am.keeper))
-}
-
 // QuerierRoute returns the bank module's querier route name.
 func (AppModule) QuerierRoute() string { return types.RouterKey }
-
-// LegacyQuerierHandler returns the bank module sdk.Querier.
-func (am AppModule) LegacyQuerierHandler(legacyQuerierCdc *codec.LegacyAmino) sdk.Querier {
-	return bankkeeper.NewQuerier(am.keeper, legacyQuerierCdc)
-}
 
 // InitGenesis performs genesis initialization for the bech32ics20 module. It returns
 // no validator updates.
@@ -120,11 +109,6 @@ func (AppModule) GenerateGenesisState(simState *module.SimulationState) {
 // ProposalContents doesn't return any content functions for governance proposals.
 func (AppModule) ProposalContents(_ module.SimulationState) []simtypes.WeightedProposalContent {
 	return nil
-}
-
-// RandomizedParams creates randomized bank param changes for the simulator.
-func (AppModule) RandomizedParams(r *rand.Rand) []simtypes.ParamChange {
-	return simulation.ParamChanges(r)
 }
 
 // RegisterStoreDecoder registers a decoder for supply module's types

@@ -1,7 +1,7 @@
 package keeper_test
 
 import (
-	channeltypes "github.com/cosmos/ibc-go/v6/modules/core/04-channel/types"
+	channeltypes "github.com/cosmos/ibc-go/v7/modules/core/04-channel/types"
 	"github.com/osmosis-labs/bech32-ibc/x/bech32ibc/types"
 )
 
@@ -79,10 +79,10 @@ func (suite *KeeperTestSuite) TestHrpIbcRecordsLifeCycle() {
 	suite.Require().Len(hrpIbcRecords, 2)
 
 	// Check getting individually
-	hrpIbcRecord, err := suite.app.Bech32IBCKeeper.GetHrpIbcRecord(suite.ctx, "cosmos")
+	_, err := suite.app.Bech32IBCKeeper.GetHrpIbcRecord(suite.ctx, "cosmos")
 	suite.Require().Error(err)
 
-	hrpIbcRecord, err = suite.app.Bech32IBCKeeper.GetHrpIbcRecord(suite.ctx, "akash")
+	hrpIbcRecord, err := suite.app.Bech32IBCKeeper.GetHrpIbcRecord(suite.ctx, "akash")
 	suite.Require().Equal(hrpIbcRecord, types.HrpIbcRecord{
 		Hrp:           "akash",
 		SourceChannel: "channel-1",

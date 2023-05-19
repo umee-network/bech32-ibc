@@ -8,8 +8,8 @@ import (
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 	bankkeeper "github.com/cosmos/cosmos-sdk/x/bank/keeper"
 	banktypes "github.com/cosmos/cosmos-sdk/x/bank/types"
-	ibctransfertypes "github.com/cosmos/ibc-go/v6/modules/apps/transfer/types"
-	clienttypes "github.com/cosmos/ibc-go/v6/modules/core/02-client/types"
+	ibctransfertypes "github.com/cosmos/ibc-go/v7/modules/apps/transfer/types"
+	clienttypes "github.com/cosmos/ibc-go/v7/modules/core/02-client/types"
 )
 
 type msgServer struct {
@@ -86,6 +86,7 @@ func (k msgServer) Send(goCtx context.Context, msg *banktypes.MsgSend) (*banktyp
 
 	return &banktypes.MsgSendResponse{}, err
 }
+
 func (k msgServer) MultiSend(goCtx context.Context, msg *banktypes.MsgMultiSend) (*banktypes.MsgMultiSendResponse, error) {
 	bankMsgServer := bankkeeper.NewMsgServerImpl(k.Keeper.Keeper)
 	return bankMsgServer.MultiSend(goCtx, msg)
